@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+        containers:
+            - name: my-app
+              image: crisdockerz/kube-data-demo:latest
+              volumeMounts:
+                - mountPath: /app/story
+                  name: my-app-volume #vinculando o volume ao container
+        volumes:
+          - name: my-app-volume
+           # emptyDir: {} #usando a configuração padrão desse tipo de volume ( {} ) | Basicamente esse emptyDir cria um diretório vazio e mantém diversos dados enquanto o pod estiver on 
+            # hostPath: #tipo do volume que seria da máquina host para um container, este tipo é especifico para apenas 1 node, se tiver mais de 1 node não é recomendado
+            #   path: /data #diretorio que vai ser criado ou nao
+            #   type:  DirectoryOrCreate # se o diretório /data já existir na máquina host, ele nao vai criar e caso ao contrário, vai criar
+            PersistentVolumeClaim:
+              claimName: host-pvc
